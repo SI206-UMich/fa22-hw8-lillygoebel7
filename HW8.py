@@ -9,6 +9,20 @@ def get_restaurant_data(db_filename):
     dictionaries. The key:value pairs should be the name, category, building, and rating
     of each restaurant in the database.
     """
+    path = os.path.dirname(os.path.abspath(__file__))
+    conn = sqlite3.connect(path+'/'+ db_filename)
+    cur = conn.cursor()
+    rest_list=[]
+    cur.execute("SELECT name, building, category, rating FROM restaurants JOIN buildings ON restaurants.building_id = buildings.id JOIN categories ON restaurants.category_id = categories.id")
+    this = cur.fetchall()
+    for i in this:
+        dict ={}
+        dict['name'] = i[0]
+        dict['category'] = i[2]
+        dict['building'] = i[1]
+        dict['rating'] = i[3]
+        rest_list.append(dict)
+    return rest_list
     pass
 
 def barchart_restaurant_categories(db_filename):
