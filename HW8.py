@@ -62,7 +62,31 @@ def highest_rated_category(db_filename):#Do this through DB as well
     in that category. This function should also create a bar chart that displays the categories along the y-axis
     and their ratings along the x-axis in descending order (by rating).
     """
-    pass
+    path = os.path.dirname(os.path.abspath(__file__))
+    conn = sqlite3.connect(path+'/'+db_filename)
+    cur = conn.cursor()
+    
+    dict = {} 
+    cur.execute("SELECT id, category FROM categories")
+    build = cur.fetchall()
+    for i in build:
+        cur.execute(f'SELECT AVG(rating) FROM restaurants WHERE restaurants.category_id = {i[0]}')
+        dict[str(i[1])] = round(cur.fetchone()[0], 1)
+
+    tup = sorted(dict.items(), key = lambda x:x[1])
+    categories = [] 
+    ratings = [] 
+    for x in tup:
+        categories.append(x[0])
+        ratings.append(x[1])
+
+    plt.barh(categories, ratings)
+    plt.xlabel("Ratings")
+    plt.ylabel("Categories")
+    plt.title("Average Restaurant Ratings by Category")
+    plt.show()
+    # print(tup[-1])
+    return tup[-1]
 
 #Try calling your functions here
 def main():
